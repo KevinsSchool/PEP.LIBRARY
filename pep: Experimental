@@ -1,7 +1,46 @@
 local UI = {}
+local Utilization = {}
+local Objects = {}
+
 local ts = game:GetService("TweenService")
 local ti = TweenInfo.new
 local ins = game:GetService("UserInputService")
 local rs = game:GetService("RunService)
 
+function UI:EnableDrag(frame, parent) -- Enable drag feature of the UI window.
+        
+    parent = parent or frame
+    
+    local isdragging = false
+    local dragInput, mousePos, framePos
+
+    frame.InputBegan:Connect(function(ins)
+        if ins.UserInputType == Enum.UserInputType.MouseButton1 then
+            isdragging = true
+            mousePos = input.Position
+            framePos = parent.Position
+            
+            input.Changed:Connect(function()
+                if ins.UserInputState == Enum.UserInputState.End then
+                    isdragging = false
+                end
+            end)
+        end
+    end)
+
+    frame.InputChanged:Connect(function(ins)
+        if ins.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+
+    input.InputChanged:Connect(function(ins)
+        if ins == dragInput and dragging then
+            local delta = input.Position - mousePos
+            parent.Position  = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
 -- WIP
+
